@@ -3,3 +3,7 @@ requests
 fabric
 Flask-Auth
 Flask-Bootstrap
+-e formgear
+PyYaml
+pymongo
+consoleargs

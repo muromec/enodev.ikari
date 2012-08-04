@@ -1,0 +1,30 @@
+title: Project
+
+fields:
+    - name: name
+      title: Name
+      required: true
+
+    - name: repo_url
+      title: Repo url
+      placeholder: "git://github.com/user/project"
+
+    - name: template
+      title: Deployment template
+      choices:
+        - [mongo, flask+mongo]
+        - [pg, postgres+django]
+
+      widget: select
+
+    - name: ssh_key
+      title: Deployment ssh key
+      widget: text
+  
+
+forms:
+    - name: default
+      fields: [name, repo_url, template, ssh_key]
+
+    - name: add
+      fields: [name, repo_url]

@@ -1,0 +1,46 @@
+{% extends "bootstrap_responsive.html" %}
+{% block title %}Login{%endblock%}
+{% block body_content %}
+{% include "header.html" %}
+<div class="container">
+<form class="form-horizontal" method="POST" >
+  <fieldset>
+    <legend>Login form</legend>
+    {% if err %}
+    <div class="alert">
+        <button class="close" data-dismiss="alert">×</button>
+         {{ err }}
+    </div>
+    {% endif %}
+    <div class="control-group">
+      <label class="control-label" for="input_login">
+        Login
+      </label>
+      <div class="controls">
+        <input type="text" class="input-xlarge" name="login" id="input_login" placeholder="Username or phone number" 
+        required="required" value="{{login}}" />
+        <p class="help-block">Who are you?</p>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="input_password">
+        Password
+      </label>
+      <div class="controls">
+        <input type="password" name='password' class="input-xlarge" id="input_password" required="required" />
+        <p class="help-block">What is your secret? </p>
+      </div>
+    </div>
+
+    <div class="control-group"> 
+    <div class="controls">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+
+    </div>
+
+  </fieldset>
+</form>
+</div>
+{% endblock %}

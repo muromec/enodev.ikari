@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h2>Project {{project.name}}</h2>
+</div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-info">
+          {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{{project.render_form()}}
+
+<form method="POST" action="op">
+<button class="btn btn-primary" name="setup">Setup</button>
+</form>
+{% endblock %}

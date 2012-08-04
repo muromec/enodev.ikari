@@ -12,6 +12,9 @@ all: env env/deps
 env:
 	$(VE) env
 
-env/deps: requirements.txt env
+formgear:
+	git clone git@github.com:xen/formgear.git 
+
+env/deps: requirements.txt env formgear
 	$(pip) install -r $<
 	touch $@

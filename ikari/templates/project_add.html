@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h2>Add project entry</h2>
+</div>
+
+<form class="form" method="POST">
+    {{form.render_form()}}
+    <button class="btn btn-primary" type="submit" >Add</button>
+</form>
+{% endblock %}

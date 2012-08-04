@@ -1,0 +1,20 @@
+title: User
+description: User model
+
+fields:
+    - name: name
+    - name: login
+    - name: password
+      widget: password
+
+    - name: salt
+      widget:
+        type: string
+        hidden: true
+
+forms:
+    - name: login
+      fields: [login, password]
+
+    - name: default
+      fields: [login, salt, password, name]

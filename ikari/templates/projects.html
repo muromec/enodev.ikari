@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h2>Project list</h2>
+</div>
+
+<table class="table">
+<thead>
+    <th>N</th>
+    <th>Name</th>
+</thead>
+{% for project in project_list %}
+<tr>
+    <td>{{loop.index}}</td>
+    <td><a href="{{project.name}}" >{{project.name}}</a></td>
+</tr>
+{% endfor %}
+</table>
+
+<a href="add" class="btn">Add</a>
+{% endblock %}
