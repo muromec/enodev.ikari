@@ -19,3 +19,6 @@ from pkg_resources import resource_filename
 fg = Blueprint('formgear', __name__,
                 template_folder=resource_filename('formgear', 'templates'))
 app.register_blueprint(fg)
+
+import task
+app.register_blueprint(task.app)

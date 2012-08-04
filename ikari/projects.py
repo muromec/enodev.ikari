@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, flash
 
 from app import app
 from models import Project
+from task import defer
 
 @app.route('/projects/')
 def projects():
@@ -35,9 +36,13 @@ def show(name):
     return render_template('project_show.html',
             project = project)
 
-@app.route('/projects/<name>/op', methods=['POST'])
+@app.route('/projects/<name>/op', methods=['POST', 'GET'])
 def op(name):
-    if request.form:
-        opcode = request.form.keys()[0]
-        flash(opcode)
+    opcode = request.form.get('op', 'ya')
+    flash(opcode)
+    task(name, op=opcode)
     return redirect('/projects/%s/'%name)
+
+@defer
+def task(name, op):
+    print 'task', name, op
