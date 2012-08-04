@@ -1,8 +1,11 @@
+import pwd
+
 from flask import render_template, request, redirect, flash
 
 from app import app
 from models import Project
 from task import defer
+import ops
 
 @app.route('/projects/')
 def projects():
@@ -40,9 +43,25 @@ def show(name):
 def op(name):
     opcode = request.form.get('op', 'ya')
     flash(opcode)
-    task(name, op=opcode)
+    task(op=opcode, project=name)
     return redirect('/projects/%s/'%name)
 
 @defer
-def task(name, op):
-    print 'task', name, op
+def task(op, *a, **kw):
+    name = kw['name']
+    project = Project.get(name=name)
+    kw['clone_url'] = project.repo_url
+    ops.run_op(op, *a, **kw)
+
+    copy_key(kw['name'])
+
+@defer
+def copy_key(name):
+    print 'copy ssh key back'
+    project = Project.get(name=name)
+
+    username = 'app-%s' % name
+    home = pwd.getpwnam(username).pw_dir
+    pubkey = '%s/.ssh/id_rsa.pub' % home
+
+    project.ssh_key = open(pubkey).read()

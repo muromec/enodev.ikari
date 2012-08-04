@@ -7,3 +7,4 @@ Flask-Bootstrap
 PyYaml
 pymongo
 consoleargs
+envoy
