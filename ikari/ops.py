@@ -76,6 +76,17 @@ def do_setup(project, clone_url):
     sudo(clone_code, project, clone_url, _user=username)
     sudo(setup_repo, project, _user=username)
 
+def do_clean(project, **kw):
+    username = 'app-%s' % project
+    home = pwd.getpwnam(username).pw_dir
+
+    assert home.startswith('/home/app')
+
+    envoy.run('sudo deluser %s' % username)
+    envoy.run('sudo rm -rf %s' % home)
+
+
+
 def fetch_key(project):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
@@ -85,6 +96,7 @@ def fetch_key(project):
 
 ops = {
         "setup": do_setup,
+        "clean": do_clean,
         "fetch_key": fetch_key,
 }
 

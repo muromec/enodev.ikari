@@ -54,13 +54,14 @@ def op(name):
 @defer
 def task(op, *a, **kw):
     project = Project.get(name=kw['project'])
-    kw['clone_url'] = project.repo_url
 
-    print ops
-    print ops.run_op
-    ops.run_op(op, *a, **kw)
+    if op == 'setup':
+        kw['clone_url'] = project.repo_url
+        ops.run_op(op, *a, **kw)
+        copy_key(kw['project'])
 
-    copy_key(kw['project'])
+    else:
+        ops.run_op(op, *a, **kw)
 
 @defer
 def copy_key(name):
