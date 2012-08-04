@@ -30,6 +30,11 @@ def add():
             form = form
     )
 
+import rpyc
+conn = rpyc.classic.connect("drct.whoisdb.me", 12345)
+ops = conn.modules.ops
+conn.modules.os.chdir('/var/')
+
 @app.route('/projects/<name>/')
 def show(name):
     project = Project.get(name=name)
@@ -48,20 +53,19 @@ def op(name):
 
 @defer
 def task(op, *a, **kw):
-    name = kw['name']
-    project = Project.get(name=name)
+    project = Project.get(name=kw['project'])
     kw['clone_url'] = project.repo_url
+
+    print ops
+    print ops.run_op
     ops.run_op(op, *a, **kw)
 
-    copy_key(kw['name'])
+    copy_key(kw['project'])
 
 @defer
 def copy_key(name):
     print 'copy ssh key back'
     project = Project.get(name=name)
 
-    username = 'app-%s' % name
-    home = pwd.getpwnam(username).pw_dir
-    pubkey = '%s/.ssh/id_rsa.pub' % home
-
-    project.ssh_key = open(pubkey).read()
+    project.ssh_key = ops.fetch_key(name)
+    project.save()

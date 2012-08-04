@@ -1,5 +1,8 @@
-import envoy
 import pwd
+import os
+
+import envoy
+from sudo import sudo, setup
 
 def run_op(op, *a, **kw):
     ops[op](*a, **kw)
@@ -12,46 +15,77 @@ def create_user(project):
     except KeyError:
         pass
 
-    envoy("useradd %s --create-home" % username)
+    envoy.run("useradd %s --create-home" % username)
 
 
 def setup_key(project):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
+    ssh =  "%s/.ssh/id_rsa.pub" % home
+    if os.access(ssh, 0):
+        return
 
-    envoy("[ -d %(ssh)s ] || sudo -u %(username)s mkdir %(ssh)s" % {
-        "ssh": "%/.ssh" % home,
-        "username": username,
-    })
+    ssh_dir = "%s/.ssh/" % home
+    if not os.access(ssh_dir, 0):
+        os.mkdir(ssh_dir)
 
-    envoy('sudo -u %s ssh-keygen -f %s/.ssh/id_rsa -N ""' % (
-        username, home))
+    envoy.run('ssh-keygen -f %s/.ssh/id_rsa -N \\"\\"' % home)
 
 def clone_code(project, url):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
     serve = '%s/serve' % home
 
-    envoy('sudo -u %s git clone %s %s' % (username, url, serve))
+    cmd = "git clone %(url)s %(serve)s" % {
+        "home": home,
+        "username": username,
+        "url": url,
+        "serve": serve,
+    }
+    r = envoy.run(cmd, timeout=10)
+    print cmd
+    print r.std_err
+    print r.std_out
+    print r.history
 
 def setup_repo(project):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
     serve = '%s/serve' % home
+    os.chdir(serve)
 
-    envoy('cd %(serve)s; sudo -u %(username)s buildout2.7' % {
-        "serve": serve,
-        "username": username,
-    })
+    r = envoy.run('virtualenv env')
+    print r.std_out
+    print r.std_err
 
+    r = envoy.run('env/bin/pip install zc.buildout')
+    print r.std_out
+    print r.std_err
+
+
+    r = envoy.run('env/bin/buildout -s')
+    print r.std_out
+
+    print r.std_err
 
 def do_setup(project, clone_url):
-    create_user(project)
-    setup_key(project)
-    clone_code(project, clone_url)
-    setup_repo(project)
+    username = 'app-%s' % project
+
+    sudo(create_user, project)
+    sudo(setup_key, project, _user=username)
+    sudo(clone_code, project, clone_url, _user=username)
+    sudo(setup_repo, project, _user=username)
+
+def fetch_key(project):
+    username = 'app-%s' % project
+    home = pwd.getpwnam(username).pw_dir
+    ssh =  "%s/.ssh/id_rsa.pub" % home
+
+    return open(ssh).read()
 
 ops = {
         "setup": do_setup,
+        "fetch_key": fetch_key,
 }
 
+setup(__name__)
