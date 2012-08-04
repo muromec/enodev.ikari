@@ -20,6 +20,7 @@ def add():
 
     if request.method == 'POST':
         proj = Project.form.add(request.form)
+        proj.status = 'new'
         if proj.validate():
             proj.save()
             return redirect('/projects')
@@ -41,6 +42,8 @@ def show(name):
     if not project:
         return "No", 404
 
+    (project._field('status')).locked = True
+
     return render_template('project_show.html',
             project = project)
 
@@ -51,21 +54,37 @@ def op(name):
     task(op=opcode, project=name)
     return redirect('/projects/%s/'%name)
 
+def status(project, status):
+    project.status = status
+    project.save()
+
 @defer
 def task(op, *a, **kw):
     project = Project.get(name=kw['project'])
 
     if op == 'setup':
-        kw['clone_url'] = project.repo_url
-        ops.run_op(op, *a, **kw)
+
+        status(project, 'install')
+
+        ops.do_setup(clone_url=project.repo_url,  *a, **kw)
+        status(project, 'ok')
+
         copy_key(kw['project'])
 
-    else:
-        ops.run_op(op, *a, **kw)
+
+    elif op == 'clean':
+
+        status(project, 'ok')
+
+        ops.do_clean(*a, **kw)
+
+        project.ssh_key = None
+        project.status = 'inactive'
+        project.save()
+
 
 @defer
 def copy_key(name):
-    print 'copy ssh key back'
     project = Project.get(name=name)
 
     project.ssh_key = ops.fetch_key(name)

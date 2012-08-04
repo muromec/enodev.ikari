@@ -4,9 +4,6 @@ import os
 import envoy
 from sudo import sudo, setup
 
-def run_op(op, *a, **kw):
-    ops[op](*a, **kw)
-
 def create_user(project):
     username = 'app-%s' % project
     try:
@@ -85,19 +82,11 @@ def do_clean(project, **kw):
     envoy.run('sudo deluser %s' % username)
     envoy.run('sudo rm -rf %s' % home)
 
-
-
 def fetch_key(project):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
     ssh =  "%s/.ssh/id_rsa.pub" % home
 
     return open(ssh).read()
-
-ops = {
-        "setup": do_setup,
-        "clean": do_clean,
-        "fetch_key": fetch_key,
-}
 
 setup(__name__)

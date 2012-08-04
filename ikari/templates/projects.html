@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+{% macro status(s) %}
+{% set label = {
+"ok": "success",
+"inactive": "inverse",
+"install" : "warning",
+}.get(s, 'inverse')
+%}
+    <span class="badge badge-{{label}}">{{s}}</span>
+{% endmacro %}
 {% block content %}
 <div class="page-header">
     <h2>Project list</h2>
@@ -7,11 +16,13 @@
 <table class="table">
 <thead>
     <th>N</th>
+    <th>Status</th>
     <th>Name</th>
 </thead>
 {% for project in project_list %}
 <tr>
     <td>{{loop.index}}</td>
+    <td>{{status(project.status)}}</td>
     <td><a href="{{project.name}}" >{{project.name}}</a></td>
 </tr>
 {% endfor %}

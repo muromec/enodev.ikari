@@ -20,11 +20,14 @@ fields:
     - name: ssh_key
       title: Deployment ssh key
       widget: text
+
+    - name: status
+      title: Status
   
 
 forms:
     - name: default
-      fields: [name, repo_url, template, ssh_key]
+      fields: [name, status, repo_url, ssh_key]
 
     - name: add
       fields: [name, repo_url]
