@@ -9,6 +9,10 @@ fields:
       title: Repo url
       placeholder: "git://github.com/user/project"
 
+    - name: domain
+      title: Domain
+      placeholder: "advice.enodev.org"
+
     - name: template
       title: Deployment template
       choices:
@@ -27,7 +31,7 @@ fields:
 
 forms:
     - name: default
-      fields: [name, status, repo_url, ssh_key]
+      fields: [name, status, domain, repo_url, ssh_key]
 
     - name: add
       fields: [name, repo_url]

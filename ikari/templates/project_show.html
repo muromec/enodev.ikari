@@ -14,10 +14,13 @@
   {% endif %}
 {% endwith %}
 
-{{project.render_form()}}
-
 <form method="POST" action="op">
-<button class="btn btn-primary" name="op" value="setup">Setup</button>
-<button class="btn" name="op" value="clean">Clean</button>
+    {{project.render_form()}}
+
+    <button class="btn" >Save</button>
+
+    <button class="btn btn-primary" name="op" value="setup">Setup</button>
+    <button class="btn" name="op" value="clean">Clean</button>
+    <button class="btn" name="op" value="key">Create key</button>
 </form>
 {% endblock %}

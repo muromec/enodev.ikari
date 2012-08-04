@@ -20,7 +20,6 @@ def add():
 
     if request.method == 'POST':
         proj = Project.form.add(request.form)
-        proj.status = 'new'
         if proj.validate():
             proj.save()
             return redirect('/projects')
@@ -49,9 +48,23 @@ def show(name):
 
 @app.route('/projects/<name>/op', methods=['POST', 'GET'])
 def op(name):
-    opcode = request.form.get('op', 'ya')
+    opcode = request.form.get('op')
+    if not opcode:
+        return save(name)
+
     flash(opcode)
     task(op=opcode, project=name)
+    return redirect('/projects/%s/'%name)
+
+def save(name):
+    project = Project.get(name=name)
+    if not project:
+        return 'No', 404
+
+    project.update(request.form)
+    project.save()
+
+    flash('Saved')
     return redirect('/projects/%s/'%name)
 
 def status(project, status):
@@ -66,7 +79,7 @@ def task(op, *a, **kw):
 
         status(project, 'install')
 
-        ops.do_setup(clone_url=project.repo_url,  *a, **kw)
+        ops.do_setup(clone_url=project.repo_url, domain=project.domain, *a, **kw)
         status(project, 'ok')
 
         copy_key(kw['project'])
@@ -81,6 +94,12 @@ def task(op, *a, **kw):
         project.ssh_key = None
         project.status = 'inactive'
         project.save()
+
+    elif op == 'key':
+
+        ops.do_key(*a, **kw)
+        status(project, 'key')
+        copy_key(kw['project'])
 
 
 @defer
