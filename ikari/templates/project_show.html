@@ -23,4 +23,15 @@
     <button class="btn" name="op" value="clean">Clean</button>
     <button class="btn" name="op" value="key">Create key</button>
 </form>
+
+<h2>Stats</h2>
+{% if status %}
+State {{status.state}}
+Workers {{status.wcount}}
+Failed workers {{status.wfail}}
+Requests handled {{status.req}}
+Errors {{status.err}}
+{% else %}
+stat unavail
+{% endif %}
 {% endblock %}

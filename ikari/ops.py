@@ -1,5 +1,6 @@
 import pwd
 import os
+from socket import *
 
 import envoy
 from sudo import sudo, setup
@@ -99,7 +100,7 @@ def setup_uwsgi(project):
     serve = '%s/serve' % home
 
     entry = "entry.py" # XXX
-    for f in ['entry.py', 'main.py', 'bin/entry']:
+    for f in ['entry.py', 'bin/entry', 'main.py']:
         path = "%s/%s" % (serve, f)
         if os.access(path, 0):
             entry = path
@@ -114,6 +115,7 @@ def setup_uwsgi(project):
     ini = tpl %{
             "entry": entry,
             "sock": "/tmp/%s.sock" % username,
+            "stats_sock": "/tmp/%s.stats.sock" % username,
             "home": home,
             "serve": serve,
             "uid": uid,
@@ -178,5 +180,51 @@ def fetch_key(project):
     ssh_a_pub = '/var/lib/ikari/keys/%s.pub' % username
 
     return open(ssh_a_pub).read()
+
+def fetch_status():
+    tcpsoc = socket(AF_INET, SOCK_STREAM)
+    tcpsoc.connect(('localhost', 1235))
+
+    data = ''
+    while True:
+        c = tcpsoc.recv(1024)
+        if not c:
+            break
+        data += c
+
+    tcpsoc.close()
+    return data
+
+def fetch_status_app(name):
+    s = socket(AF_UNIX, SOCK_STREAM)
+
+    try:
+        s.connect("/tmp/app-%s.stats.sock" % name)
+    except:
+        return
+    
+    data = ''
+    while True:
+        c = s.recv(1024)
+        if not c:
+            break
+        data += c
+
+    s.close()
+    return data
+
+def _fetch_rev(name):
+    username = 'app-%s' % name
+    home = pwd.getpwnam(username).pw_dir
+    serve = '%s/serve' % home
+    os.chdir(serve)
+
+    f = '%h %s'
+    r = envoy.run("git log --format=\\'%s\\' -n 1" % f)
+    return r.std_out
+
+def fetch_rev(name):
+    username = 'app-%s' % name
+    return sudo(_fetch_rev, name, user=username).strip()
 
 setup(__name__)

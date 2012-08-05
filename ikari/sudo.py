@@ -34,7 +34,7 @@ def sudo(f, *a, **kw):
     r = envoy.run(cmd)
     print '>> ', r.std_out
     print '>! ', r.std_err
-    return r
+    return r.std_out
     
 
 if __name__ == '__main__':
@@ -42,7 +42,6 @@ if __name__ == '__main__':
     os.chdir(cwd)
 
     entryname = entryname.rsplit('.', 1)[0]
-    print entryname
     mod = __import__(entryname, fromlist=['*'])
 
     if modname == '__main__':
@@ -56,4 +55,5 @@ if __name__ == '__main__':
     kwargs = {}
 
     del os.environ['PYTHONPATH']
-    f(*args, **kwargs)
+    ret = f(*args, **kwargs)
+    print ret

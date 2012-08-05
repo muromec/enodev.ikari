@@ -1,13 +1,38 @@
 {% extends "base.html" %}
-{% macro status(s) %}
+{% macro status(s, a) %}
 {% set label = {
 "ok": "success",
 "inactive": "inverse",
 "install" : "warning",
+"fail":"important",
 }.get(s, 'inverse')
 %}
     <span class="badge badge-{{label}}">{{s}}</span>
 {% endmacro %}
+{% macro rstatus(a, rs) %}
+    {% if a and rs %}
+    {% if rs.state == 'ok' %}
+        <span class="badge badge-success">Running {{rs.wcount}} R {{rs.req}}</span>
+    {% endif %}
+
+    {% if rs.state == 'warn' %}
+        <span class="badge badge-warning" >Running {{rs.wcount}} R: {{rs.req}} E {{rs.err}}</span>
+
+    {% endif %}
+
+    {% if rs.state == 'fail' %}
+    <span class="badge badge-important" >Total fail {{rs.wcount}} F: {{rs.wfail}} R: {{rs.req}} E {{rs.err}}</span>
+    {% endif %}
+    
+    {% if rs.state == 'idle' %}
+    <span class="badge" >Lazy R: {{rs.req}} E {{rs.err}}</span>
+    {% endif %}
+
+    {% else %}
+        <span class="badge badge">Stopped</span>
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
 <div class="page-header">
     <h2>Project list</h2>
@@ -16,14 +41,18 @@
 <table class="table">
 <thead>
     <th>N</th>
-    <th>Status</th>
     <th>Name</th>
+    <th>Status</th>
+    <th>Running</th>
+    <th>Rev</th>
 </thead>
 {% for project in project_list %}
 <tr>
     <td>{{loop.index}}</td>
-    <td>{{status(project.status)}}</td>
     <td><a href="{{project.name}}" >{{project.name}}</a></td>
+    <td>{{status(project.status, project._alive)}}</td>
+    <td>{{rstatus(project._alive, project._stats)}}</td>
+    <td>{{project._rev}}</td>
 </tr>
 {% endfor %}
 </table>
