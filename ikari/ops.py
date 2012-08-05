@@ -96,6 +96,10 @@ def setup_uwsgi(project):
 
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
+    rel = open('%s/reload' % home, 'w')
+    rel.write('')
+    rel.close()
+
     uid = pwd.getpwnam(username).pw_uid
     serve = '%s/serve' % home
 
@@ -165,11 +169,14 @@ def do_setup(project, clone_url, domain):
 def do_clean(project, **kw):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
+    serve = '%s/serve' % home
+
+    nconf = '/etc/nginx/sites-enabled/%s' % username,
+    uini = '%s/uwsgi.ini' % home
 
     assert home.startswith('/home/app')
-
-    envoy.run('sudo deluser %s' % username)
-    envoy.run('sudo rm -rf %s' % home)
+    envoy.run('sudo rm -rf %s/reload %s/.ssh %s %s %s'%(
+        home, home, serve, uini, nconf))
 
 def do_key(project, **kw):
     setup_key(project)
