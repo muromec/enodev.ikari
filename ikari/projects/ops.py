@@ -168,12 +168,12 @@ def do_setup(project, clone_url, domain, static=False):
     setup_key(project)
     sudo(clone_code, project, clone_url, _user=username)
     if static:
-        setup_nginx(project, domain, static=True)
+        sudo(setup_nginx, project, domain, static=True)
         return
 
     sudo(setup_repo, project, _user=username)
     sudo(setup_uwsgi, project)
-    setup_nginx(project, domain)
+    sudo(setup_nginx, project, domain)
 
 def do_clean(project, **kw):
     username = 'app-%s' % project
