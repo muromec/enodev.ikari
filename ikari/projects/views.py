@@ -21,6 +21,11 @@ def projects():
     status_dict = rstatus()
 
     for p in plist:
+        # not uwsgi instances for static
+        # so no alive checks
+        if p.template=='static':
+            continue
+
         p._alive = ('app-%s' % p.name) in status_dict
         if p._alive:
             p._stats = rstatus_name(p.name)
