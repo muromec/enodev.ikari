@@ -7,6 +7,7 @@
 "fail":"important",
 }.get(s, 'inverse')
 %}
+{% set label = 'important' if s.startswith('fail-') else label %}
     <span class="badge badge-{{label}}">{{s}}</span>
 {% endmacro %}
 {% macro rstatus(a, rs) %}
