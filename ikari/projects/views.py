@@ -218,9 +218,11 @@ def task(op, push_id, *a, **kw):
         copy_key(kw['project'])
 
     elif op == 'up':
+        s('updating')
         ops.do_up(project.name)
+
         project.rev = rev(project.name)
-        project.save()
+        s('ok')
 
     elif op == 'clean':
 
