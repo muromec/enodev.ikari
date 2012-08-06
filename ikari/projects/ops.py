@@ -51,11 +51,9 @@ def clone_code(project, url):
         "url": url,
         "serve": serve,
     }
-    r = envoy.run(cmd, timeout=10)
-    print cmd
-    print r.std_err
-    print r.std_out
-    print r.history
+    envoy.run(cmd, timeout=10)
+    if not os.access(serve + '/.git/config', 0):
+        return 'fail-clone'
 
 def setup_repo_buildout(project):
     print 'setup bb'
@@ -166,7 +164,10 @@ def do_setup(project, clone_url, domain, static=False):
 
     sudo(create_user, project)
     sudo(setup_key, project)
-    sudo(clone_code, project, clone_url, _user=username)
+    ret = sudo(clone_code, project, clone_url, _user=username)
+    if ret:
+        return ret
+
     if static:
         sudo(setup_nginx, project, domain, static=True)
         return

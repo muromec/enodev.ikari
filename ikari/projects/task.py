@@ -20,7 +20,7 @@ def task(op, project_id, push_id):
 def task_setup(project, s):
     s('install')
 
-    ops.do_setup(
+    ret = ops.do_setup(
             project=project.name,
             clone_url=project.repo_url,
             domain=project.domain,
@@ -28,7 +28,10 @@ def task_setup(project, s):
     )
     project.rev = rev(project.name)
 
-    s('ok')
+    if not ret:
+        s('ok')
+    else:
+        s(ret)
 
     copy_key(project.name, s._id)
 
