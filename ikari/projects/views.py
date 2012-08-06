@@ -10,7 +10,7 @@ from flaskext.redtask import defer
 
 def get_ops():
     username = os.getenv('USER') or ''
-    if 'ikari' in username:
+    if 'ikari' in username or True:
         import ops
         return ops
 
