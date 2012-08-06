@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+
+<a name="alerts" ></a>
 <div class="page-header">
     <h2>Project {{project.name}}</h2>
 </div>
 
+<div class="alerts">
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
@@ -13,16 +16,19 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
+</div>
 
 <form method="POST" action="op">
     {{project.render_form()}}
 
+    <a name="buttons" ></a>
     <button class="btn" >Save</button>
 
     <button class="btn btn-primary" name="op" value="setup">Setup</button>
     <button class="btn btn" name="op" value="up">Update</button>
     <button class="btn" name="op" value="clean">Clean</button>
     <button class="btn" name="op" value="key">Create key</button>
+    <input type="hidden" name="_push_id" ></input>
 </form>
 
 <h2>Stats</h2>
@@ -35,4 +41,9 @@ Errors {{status.err}}
 {% else %}
 stat unavail
 {% endif %}
+{% endblock %}
+
+{% block bootstrap_js_bottom %}
+{{ super() }}
+<script type="text/javascript" src="/static/project_push.js" > </script>
 {% endblock %}

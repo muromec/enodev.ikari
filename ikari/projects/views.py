@@ -1,12 +1,13 @@
 import os
 import json
+from functools import partial
 
 from flask import render_template, request, redirect, flash, g
 
 from ikari.app import app
 from ikari.login import login_required
 from models import Project
-from flaskext.redtask import defer
+from flaskext.redtask import defer, push
 
 @app.before_request
 def menu():
@@ -153,11 +154,14 @@ def show(name):
 @login_required
 def op(name):
     opcode = request.form.get('op')
+    push_id = request.form.get('_push_id')
     if not opcode:
         return save(name)
 
-    flash(opcode)
-    task(op=opcode, project=name)
+    if not push_id:
+        flash(opcode)
+
+    task(op=opcode, project=name, push_id=push_id)
     return redirect('/projects/%s/'%name)
 
 def save(name):
@@ -175,13 +179,31 @@ def status(project, status):
     project.status = status
     project.save()
 
+def push_status(push_id, project, _status):
+    status(project, _status)
+    if not push_id:
+        return
+
+    push(push_id, {
+        "typ": "project.status",
+        "status": _status,
+        "project": project.name,
+    })
+    push(push_id, {
+        "typ": "flash",
+        "project": project.name,
+        "op": _status,
+    })
+
 @defer
-def task(op, *a, **kw):
+def task(op, push_id, *a, **kw):
     project = Project.get(name=kw['project'])
+
+    s = partial(push_status, push_id, project)
 
     if op == 'setup':
 
-        status(project, 'install')
+        s('install')
 
         ops.do_setup(
                 project=project.name,
@@ -191,7 +213,7 @@ def task(op, *a, **kw):
         )
         project.rev = rev(project.name)
 
-        status(project, 'ok')
+        s('ok')
 
         copy_key(kw['project'])
 
@@ -202,18 +224,17 @@ def task(op, *a, **kw):
 
     elif op == 'clean':
 
-        status(project, 'ok')
+        s('cleaning')
 
         ops.do_clean(*a, **kw)
 
         project.ssh_key = None
-        project.status = 'inactive'
-        project.save()
+        s('inactive')
 
     elif op == 'key':
 
         ops.do_key(*a, **kw)
-        status(project, 'key')
+        s('key')
         copy_key(kw['project'])
 
 
