@@ -61,6 +61,8 @@ def show(name):
         return "No", 404
 
     (project._field('status')).locked = True
+    (project._field('rev')).locked = True
+
     status = rstatus_name(name)
 
     return render_template('project_show.html',
