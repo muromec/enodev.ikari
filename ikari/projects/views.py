@@ -1,12 +1,19 @@
 import os
 import json
 
-from flask import render_template, request, redirect, flash
+from flask import render_template, request, redirect, flash, g
 
 from ikari.app import app
 from ikari.login import login_required
 from models import Project
 from flaskext.redtask import defer
+
+@app.before_app_request
+def menu():
+    g.head_menu = [
+            ('/projects/', 'Projects'),
+    ]
+
 
 def get_ops():
     username = os.getenv('USER') or ''
