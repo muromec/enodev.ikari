@@ -3,7 +3,8 @@ requests
 fabric
 Flask-Auth
 Flask-Bootstrap
--e formgear
+Flask-Redtask
+formgear
 PyYaml
 pymongo
 consoleargs
