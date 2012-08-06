@@ -175,7 +175,7 @@ def do_setup(project, clone_url, domain, static=False):
     sudo(setup_uwsgi, project)
     sudo(setup_nginx, project, domain)
 
-def do_clean(project, **kw):
+def do_clean(project):
     username = 'app-%s' % project
     home = pwd.getpwnam(username).pw_dir
     serve = '%s/serve' % home
