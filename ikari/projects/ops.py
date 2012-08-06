@@ -190,6 +190,20 @@ def do_clean(project, **kw):
 def do_key(project, **kw):
     setup_key(project)
 
+def update_code(project):
+    username = 'app-%s' % project
+    home = pwd.getpwnam(username).pw_dir
+    serve = '%s/serve' % home
+
+    os.chdir(serve)
+
+    envoy.run("git reset --hard")
+    envoy.run("git pull --rebase")
+
+def do_up(project):
+    username = 'app-%s' % project
+
+    sudo(update_code, project, user=username)
 
 def fetch_key(project):
     username = 'app-%s' % project
