@@ -8,7 +8,7 @@ from ikari.login import login_required
 from models import Project
 from flaskext.redtask import defer
 
-@app.before_app_request
+@app.before_request
 def menu():
     g.head_menu = [
             ('/projects/', 'Projects'),
