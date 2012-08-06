@@ -7,6 +7,8 @@ def setup(mod):
     setup.mod = mod
 setup.mod = None
 
+__file__ = os.path.abspath(__file__)
+
 def sudo(f, *a, **kw):
 
     user = kw.pop('_user', 'root')
@@ -15,15 +17,12 @@ def sudo(f, *a, **kw):
         cwd = pwd.getpwnam(user).pw_dir
 
     os.chdir('/')
-    print 'run', f, f.__module__, sys.argv, sys.executable
-    entry = sys.modules['__main__']
-    path = [os.path.dirname(entry.__file__)]+sys.path
     entry_mod = setup.mod or sys.argv[0]
 
     cmd = 'sudo -u %s env PYTHONPATH=%s %s %s %s %s %s %s %s' % (
             user,
-            str.join(':',path),
-            sys.executable,
+            str.join(':',sys.path),
+            sys.prefix+'/bin/python',
             __file__,
             entry_mod,
             f.__module__,
