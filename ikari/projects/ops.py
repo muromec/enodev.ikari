@@ -56,22 +56,15 @@ def clone_code(project, url):
         return 'fail-clone'
 
 def setup_repo_buildout(project):
-    print 'setup bb'
-
     r = envoy.run('env/bin/pip install zc.buildout')
-    print r.std_out
-    print r.std_err
-
-
     r = envoy.run('env/bin/buildout -s')
-    print r.std_out
-    print r.std_err
+    if r.status_code:
+        return 'fail-buildout'
 
 def setup_repo_venv(project):
-    print 'setup venv'
     r = envoy.run('env/bin/pip install -r requirements.txt')
-    print r.std_out
-    print r.std_err
+    if r.status_code:
+        return 'fail-pip'
 
 def setup_repo(project):
     username = 'app-%s' % project
@@ -79,14 +72,12 @@ def setup_repo(project):
     serve = '%s/serve' % home
     os.chdir(serve)
 
-    r = envoy.run('virtualenv env')
-    print r.std_out
-    print r.std_err
+    envoy.run('virtualenv env')
 
     if os.access('buildout.cfg', 0):
-        setup_repo_buildout(project)
+        return setup_repo_buildout(project)
     elif os.access('requirements.txt', 0):
-        setup_repo_venv(project)
+        return setup_repo_venv(project)
 
 def setup_uwsgi(project):
     tpl_f = '/var/lib/ikari/uwsgi.ini'
@@ -172,7 +163,10 @@ def do_setup(project, clone_url, domain, static=False):
         sudo(setup_nginx, project, domain, static=True)
         return
 
-    sudo(setup_repo, project, _user=username)
+    ret = sudo(setup_repo, project, _user=username)
+    if ret:
+        return ret
+
     sudo(setup_uwsgi, project)
     sudo(setup_nginx, project, domain)
 
