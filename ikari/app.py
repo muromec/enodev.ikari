@@ -20,5 +20,5 @@ fg = Blueprint('formgear', __name__,
                 template_folder=resource_filename('formgear', 'templates'))
 app.register_blueprint(fg)
 
-import task
+from flaskext import redtask as task
 app.register_blueprint(task.app)

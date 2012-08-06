@@ -1,0 +1,3 @@
+- disable password-auth when cloning ssh
+- generate key after creating project
+- dont show static projects as "failed stopped"

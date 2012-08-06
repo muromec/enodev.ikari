@@ -18,6 +18,7 @@ fields:
       choices:
         - [mongo, flask+mongo]
         - [pg, postgres+django]
+        - [static, static pages]
 
       widget: select
 
@@ -31,7 +32,7 @@ fields:
 
 forms:
     - name: default
-      fields: [name, status, domain, repo_url, ssh_key]
+      fields: [name, status, domain, repo_url, template, ssh_key]
 
     - name: add
       fields: [name, repo_url]

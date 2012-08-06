@@ -1,14 +1,31 @@
+import os
 import json
 
 from flask import render_template, request, redirect, flash
 
-from app import app
+from ikari.app import app
 from models import Project
-from task import defer
-import ops
+from flaskext.redtask import defer
+
+def get_ops():
+    username = os.getlogin()
+    if 'ikari' in username or 1:
+        import ops
+        return ops
+
+    import rpyc
+    global conn ## XXX no refs to conn
+    conn = rpyc.classic.connect("drct.whoisdb.me", 12345)
+    ops = conn.modules.ops
+    conn.modules.os.chdir('/var/')
+    return ops
+
+ops = get_ops()
 
 def rstatus(name=None):
     _status = ops.fetch_status()
+    if not _status:
+        return {}
     status = json.loads(_status)
 
     status_dict = {
@@ -110,10 +127,6 @@ def add():
             form = form
     )
 
-import rpyc
-conn = rpyc.classic.connect("drct.whoisdb.me", 12345)
-ops = conn.modules.ops
-conn.modules.os.chdir('/var/')
 
 @app.route('/projects/<name>/')
 def show(name):
@@ -160,7 +173,12 @@ def task(op, *a, **kw):
 
         status(project, 'install')
 
-        ops.do_setup(clone_url=project.repo_url, domain=project.domain, *a, **kw)
+        ops.do_setup(
+                project=project.name,
+                clone_url=project.repo_url,
+                domain=project.domain,
+                static=project.template=='static'
+        )
         status(project, 'ok')
 
         copy_key(kw['project'])

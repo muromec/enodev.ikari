@@ -3,7 +3,7 @@ import os
 from socket import *
 
 import envoy
-from sudo import sudo, setup
+from enodev.sudo import sudo, setup as sudo_setup
 
 def create_user(project):
     username = 'app-%s' % project
@@ -133,8 +133,13 @@ def setup_uwsgi(project):
     uwsgi.write(ini)
     uwsgi.close()
 
-def setup_nginx(project, domain):
-    tpl_f = '/var/lib/ikari/nginx.conf'
+def setup_nginx(project, domain, static=False):
+    tpl_f = '/var/lib/ikari/'
+    if static:
+        tpl_f += 'nginx-static.conf'
+    else:
+        tpl_f += 'nginx.conf'
+
     tpl = open(tpl_f).read()
     
     username = 'app-%s' % project
@@ -156,12 +161,16 @@ def setup_nginx(project, domain):
 
     envoy.run('sudo /etc/init.d/nginx reload')
 
-def do_setup(project, clone_url, domain):
+def do_setup(project, clone_url, domain, static=False):
     username = 'app-%s' % project
 
     sudo(create_user, project)
     setup_key(project)
     sudo(clone_code, project, clone_url, _user=username)
+    if static:
+        setup_nginx(project, domain, static=True)
+        return
+
     sudo(setup_repo, project, _user=username)
     sudo(setup_uwsgi, project)
     setup_nginx(project, domain)
@@ -190,7 +199,10 @@ def fetch_key(project):
 
 def fetch_status():
     tcpsoc = socket(AF_INET, SOCK_STREAM)
-    tcpsoc.connect(('localhost', 1235))
+    try:
+        tcpsoc.connect(('localhost', 1235))
+    except error:
+        return
 
     data = ''
     while True:
@@ -234,4 +246,4 @@ def fetch_rev(name):
     username = 'app-%s' % name
     return sudo(_fetch_rev, name, user=username).strip()
 
-setup(__name__)
+sudo_setup(__name__)
