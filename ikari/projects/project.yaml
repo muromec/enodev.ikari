@@ -29,10 +29,12 @@ fields:
     - name: status
       title: Status
   
+    - name: rev
+      title: Deployed revision
 
 forms:
     - name: default
-      fields: [name, status, domain, repo_url, template, ssh_key]
+      fields: [name, status, domain, repo_url, template, ssh_key, rev]
 
     - name: add
       fields: [name, repo_url]

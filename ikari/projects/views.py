@@ -107,7 +107,10 @@ def projects():
         if not p._alive and p.status=='ok':
             p.status='fail'
 
-        p._rev = rev(p.name)
+        # XXX
+        if not p.rev:
+            p.rev or rev(p.name)
+            p.save()
 
     return render_template('projects.html',
             project_list=plist,
