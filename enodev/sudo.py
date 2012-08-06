@@ -55,4 +55,5 @@ if __name__ == '__main__':
 
     del os.environ['PYTHONPATH']
     ret = f(*args, **kwargs)
-    print ret
+    if isinstance(ret, basestring):
+        print ret
