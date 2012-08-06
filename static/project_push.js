@@ -26,6 +26,9 @@ $(document).ready(function(){
         if(msg.typ == 'flash') {
             var flash_el = $("<div>");
             flash_el.addClass("alert");
+            if (msg.op.substr(0, 4) === 'fail') {
+                flash_el.addClass("alert-error");
+            }
             flash_el.text(msg.op);
             $(".alerts").append(flash_el);
             location.hash = 'alerts';
