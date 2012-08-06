@@ -233,16 +233,30 @@ def task(op, push_id, *a, **kw):
         project.ssh_key = None
         s('inactive')
 
+        push(push_id, {
+            "typ": "project.key",
+            "key": "",
+            "project": project.name,
+        })
     elif op == 'key':
 
         ops.do_key(*a, **kw)
         s('key')
-        copy_key(kw['project'])
+        copy_key(kw['project'], push_id)
 
 
 @defer
-def copy_key(name):
+def copy_key(name, push_id=None):
     project = Project.get(name=name)
 
     project.ssh_key = ops.fetch_key(name)
     project.save()
+
+    if not push_id:
+        return
+
+    push(push_id, {
+        "typ": "project.key",
+        "key": project.ssh_key,
+        "project": project.name,
+    })

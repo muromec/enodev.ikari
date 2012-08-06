@@ -34,6 +34,9 @@ $(document).ready(function(){
         if(msg.typ == 'project.status') {
             $("form p").text(msg.status);
         }
+        if(msg.typ == 'project.key') {
+            $("#form_ssh_key_id").val(msg.key);
+        }
     };
     var push_id_event = function(id) {
         $("input[name=_push_id]").val(id);
