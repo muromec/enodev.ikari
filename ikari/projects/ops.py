@@ -203,7 +203,12 @@ def update_code(project):
 def do_up(project):
     username = 'app-%s' % project
 
+    oldrev = sudo(_fetch_rev, name, user=username).strip()
     sudo(update_code, project, _user=username)
+    rev = sudo(_fetch_rev, name, user=username).strip()
+    if rev and (rev == oldrev):
+        return
+
     sudo(setup_repo, project, _user=username)
     sudo(setup_uwsgi, project)
 
