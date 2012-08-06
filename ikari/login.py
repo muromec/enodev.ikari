@@ -43,7 +43,7 @@ def login_required(f):
     @wraps(f)
     def wrap(*a, **kw):
         if not g.user or not g.user.login:
-            return "No", 403
+            return redirect('/login')
 
         return f(*a, **kw)
 
