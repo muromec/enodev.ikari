@@ -4,12 +4,13 @@ import json
 from flask import render_template, request, redirect, flash
 
 from ikari.app import app
+from ikari.login import login_required
 from models import Project
 from flaskext.redtask import defer
 
 def get_ops():
     username = os.getlogin()
-    if 'ikari' in username or 1:
+    if 'ikari' in username:
         import ops
         return ops
 
@@ -89,6 +90,7 @@ def rev(name):
     return ops.fetch_rev(name)
 
 @app.route('/projects/')
+@login_required
 def projects():
     plist = Project.all()
     status_dict = rstatus()
@@ -112,6 +114,7 @@ def projects():
     )
 
 @app.route('/projects/add', methods=['GET', 'POST'])
+@login_required
 def add():
     form = Project.form.add
 
@@ -129,6 +132,7 @@ def add():
 
 
 @app.route('/projects/<name>/')
+@login_required
 def show(name):
     project = Project.get(name=name)
     if not project:
@@ -141,6 +145,7 @@ def show(name):
             project=project, status=status)
 
 @app.route('/projects/<name>/op', methods=['POST', 'GET'])
+@login_required
 def op(name):
     opcode = request.form.get('op')
     if not opcode:
