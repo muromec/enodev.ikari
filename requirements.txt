@@ -1,6 +1,5 @@
 flask
 requests
-fabric
 Flask-Auth
 Flask-Bootstrap
 Flask-Redtask
