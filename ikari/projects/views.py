@@ -9,7 +9,7 @@ from models import Project
 from flaskext.redtask import defer
 
 def get_ops():
-    username = os.getlogin()
+    username = os.getenv('USER') or ''
     if 'ikari' in username:
         import ops
         return ops
