@@ -165,7 +165,7 @@ def do_setup(project, clone_url, domain, static=False):
     username = 'app-%s' % project
 
     sudo(create_user, project)
-    setup_key(project)
+    sudo(setup_key, project)
     sudo(clone_code, project, clone_url, _user=username)
     if static:
         sudo(setup_nginx, project, domain, static=True)
@@ -188,7 +188,7 @@ def do_clean(project, **kw):
         home, home, serve, uini, nconf))
 
 def do_key(project, **kw):
-    setup_key(project)
+    sudo(setup_key, project)
 
 def update_code(project):
     username = 'app-%s' % project
