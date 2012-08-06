@@ -179,16 +179,19 @@ def status(project, status):
     project.status = status
     project.save()
 
-def push_status(push_id, project, _status):
+def push_status(push_id, project, _status, **kw):
     status(project, _status)
     if not push_id:
         return
 
-    push(push_id, {
+    data = {
         "typ": "project.status",
         "status": _status,
         "project": project.name,
-    })
+    }
+    data.update(kw)
+    push(push_id, data)
+
     push(push_id, {
         "typ": "flash",
         "project": project.name,
@@ -222,7 +225,7 @@ def task(op, push_id, *a, **kw):
         ops.do_up(project.name)
 
         project.rev = rev(project.name)
-        s('ok')
+        s('ok', rev=project.rev)
 
     elif op == 'clean':
 
