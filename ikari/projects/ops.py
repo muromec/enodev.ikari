@@ -203,7 +203,7 @@ def update_code(project):
 def do_up(project):
     username = 'app-%s' % project
 
-    sudo(update_code, project, user=username)
+    sudo(update_code, project, _user=username)
 
 def fetch_key(project):
     username = 'app-%s' % project
