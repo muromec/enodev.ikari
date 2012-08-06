@@ -104,7 +104,7 @@ def setup_uwsgi(project):
     serve = '%s/serve' % home
 
     entry = "entry.py" # XXX
-    for f in ['entry.py', 'bin/entry', 'main.py']:
+    for f in ['entry.py', 'bin/django.wsgi', 'bin/entry', 'main.py']:
         path = "%s/%s" % (serve, f)
         if os.access(path, 0):
             entry = path
