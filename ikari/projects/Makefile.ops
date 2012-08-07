@@ -63,7 +63,7 @@ fetch_key:
 	cat $(SSH_A_PUB)
 
 fetch_rev_in:
-	sh -c 'cd $(APP_HOME)/serve ;\
+	sh -c 'cd $(APP_HOME)/serve && \
 	    git log -n 1 --format="%h %s"'
 
 fetch_rev:
