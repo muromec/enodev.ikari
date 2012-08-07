@@ -33,10 +33,13 @@ ssh_h:
 
 setup_key: ssh_a ssh_h
 
-update_code:
+update_code_in:
 	sh -c 'cd $(APP_HOME)/serve && \
 	    (git reset --hard ; \
 	    git pull --rebase )'
+
+update_code:
+	sudo -u $(APP_USER) $(RE) update_code_in
 
 setup_venv:
 	$(APP_HOME)/serve/env/bin/pip install -r requirements.txt --upgrade
@@ -51,9 +54,12 @@ $(APP_HOME)/serve/env/bin/python:
 setup_buldout: $(APP_HOME)/serve/env/bin/buildout
 	$< -s
 
-setup_repo: $(APP_HOME)/serve/env/bin/python
+setup_repo_in: $(APP_HOME)/serve/env/bin/python
 	[ -f $(APP_HOME)/serve/buildout.cfg ] && $(RE) setup_buldout || true
 	[ -f $(APP_HOME)/serve/requirements.txt ] && $(RE) setup_venv || true
+
+setup_repo:
+	sudo -u $(APP_USER) $(RE) setup_repo_in
 
 $(APP_HOME)/serve:
 	git clone $(URL) $(APP_HOME)/serve
