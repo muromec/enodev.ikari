@@ -244,7 +244,13 @@ def make(project, target):
             "app": project,
             "target": target,
     }
-    r = envoy.run('make -f %(mf)s APP=%(app)s ME=%(mf)s %(target)s -s' % kw)
+    cmd = 'make -f %(mf)s APP=%(app)s ME=%(mf)s %(target)s -s' % kw
+
+    print 'run', cmd
+    print 'at', os.getcwd()
+
+    r = envoy.run(cmd)
+
     print r.std_err
     return r.status_code
 
