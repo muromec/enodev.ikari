@@ -51,8 +51,8 @@ $(APP_HOME)/serve/env/bin/buildout:
 $(APP_HOME)/serve/env/bin/python:
 	virtualenv $(APP_HOME)/serve/env
 
-setup_buildout: $(APP_HOME)/serve/env/bin/buildout
-	$< -s
+setup_buildout:
+	buildout2.7
 
 setup_repo_in: $(APP_HOME)/serve/env/bin/python
 	if [ -f $(APP_HOME)/serve/buildout.cfg ]; then\
