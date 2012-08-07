@@ -16,6 +16,7 @@ def sudo(f, *a, **kw):
     if cwd is None:
         cwd = pwd.getpwnam(user).pw_dir
 
+    prev_dir = os.getcwd()
     os.chdir('/')
     entry_mod = setup.mod or sys.argv[0]
 
@@ -33,6 +34,7 @@ def sudo(f, *a, **kw):
     r = envoy.run(cmd)
     print '>> ', r.std_out
     print '>! ', r.std_err
+    os.chdir(prev_dir)
     return r.std_out
     
 
