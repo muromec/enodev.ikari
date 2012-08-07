@@ -13,12 +13,14 @@ SSH_H_PUB=$(SSH_H).pub
 # targets
 #########
 
+RE=make -f $(ME) APP=$(APP) -s
+
 # SSH
 $(SSH_A):
 	ssh-keygen -f $@ -N ""
 
 ssh_a:
-	sudo make -f $(CURDIR)/Makefile.ops APP=$(APP) $(SSH_A) -s
+	sudo $(RE) $(SSH_A)
 
 $(SSH_H): $(SSH_A)
 	[ -d $(SSH_HOME) ] || mkdir $(SSH_HOME)
@@ -27,7 +29,7 @@ $(SSH_H): $(SSH_A)
 	chown $(APP_USER) -R $(SSH_HOME)	
 
 ssh_h:
-	[ -d $(APP_HOME) ] && sudo make -f $(CURDIR)/Makefile.ops APP=$(APP) $(SSH_H) -s || true
+	[ -d $(APP_HOME) ] && sudo $(RE) $(SSH_H) || true
 
 setup_key: ssh_a ssh_h
 

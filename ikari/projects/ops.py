@@ -133,7 +133,7 @@ def do_setup(project, clone_url, domain, static=False):
     username = 'app-%s' % project
 
     sudo(create_user, project)
-    sudo(setup_key, project)
+    setup_key(project)
     ret = sudo(clone_code, project, clone_url, _user=username)
     if ret:
         return ret
