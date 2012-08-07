@@ -190,40 +190,10 @@ def fetch_key(project):
     return make(project, 'fetch_key')
 
 def fetch_status():
-    tcpsoc = socket(AF_INET, SOCK_STREAM)
-    try:
-        tcpsoc.connect(('localhost', 1235))
-    except error:
-        return
-
-    data = ''
-    while True:
-        c = tcpsoc.recv(1024)
-        if not c:
-            break
-        data += c
-
-    tcpsoc.close()
-    return data
+    return make(project, 'fetch_status')
 
 def fetch_status_app(name):
-    s = socket(AF_UNIX, SOCK_STREAM)
-
-    try:
-        s.connect("/tmp/app-%s.stats.sock" % name)
-    except:
-        return
-    
-    data = ''
-    while True:
-        c = s.recv(1024)
-        if not c:
-            break
-        data += c
-
-    s.close()
-    return data
-
+    return make(name, 'fetch_status_app')
 
 def fetch_rev(name):
     return make(name, 'fetch_rev')

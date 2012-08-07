@@ -42,3 +42,9 @@ fetch_rev_in:
 
 fetch_rev:
 	sudo -u $(APP_USER) $(RE) fetch_rev_in
+
+fetch_status:
+	nc localhost 1235
+
+fetch_status_app:
+	nc -U /tmp/$(APP_USER).stats.sock
