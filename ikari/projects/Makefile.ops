@@ -45,13 +45,15 @@ setup_venv:
 $(APP_HOME)/serve/env/bin/buildout:
 	$(APP_HOME)/serve/env/bin/pip install zc.buildout
 
+$(APP_HOME)/serve/env/bin/python:
+	virtualenv $(APP_HOME)/serve/env
+
 setup_buldout: $(APP_HOME)/serve/env/bin/buildout
 	$< -s
 
-setup_repo:
-	virtualenv $(APP_HOME)/serve/env
-	[ -d $(APP_HOME)/serve/buildout.cfg ] && $(RE) setup_buldout || true
-	[ -d $(APP_HOME)/serve/requirements.txt ] && $(RE) setup_venv || true
+setup_repo: $(APP_HOME)/serve/env/bin/python
+	[ -f $(APP_HOME)/serve/buildout.cfg ] && $(RE) setup_buldout || true
+	[ -f $(APP_HOME)/serve/requirements.txt ] && $(RE) setup_venv || true
 
 
 fetch_key:
