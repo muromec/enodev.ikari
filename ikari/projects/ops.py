@@ -20,19 +20,7 @@ def setup_key(project):
     return make(project, 'setup_key')
 
 def clone_code(project, url):
-    username = 'app-%s' % project
-    home = pwd.getpwnam(username).pw_dir
-    serve = '%s/serve' % home
-
-    cmd = "git clone %(url)s %(serve)s" % {
-        "home": home,
-        "username": username,
-        "url": url,
-        "serve": serve,
-    }
-    envoy.run(cmd, timeout=10)
-    if not os.access(serve + '/.git/config', 0):
-        return 'fail-clone'
+    return make(project, clone_code, env=[{"URL":url}])
 
 def setup_repo(project):
     return make(project, 'setup_repo')
@@ -173,13 +161,22 @@ def fetch_status_app(name):
 def fetch_rev(name):
     return make(name, 'fetch_rev')
 
-def make(project, target):
+def make(project, target, env=None):
+    if env:
+        env = str.join(" ", [
+            "%s=%s" % (k,v)
+            for k, v in env
+        ])
+    else:
+        env = ""
+
     kw = {
             "mf": "./ikari/projects/Makefile.ops",
             "app": project,
             "target": target,
+            "env": env,
     }
-    cmd = 'make -f %(mf)s APP=%(app)s ME=%(mf)s %(target)s -s' % kw
+    cmd = 'make -f %(mf)s APP=%(app)s ME=%(mf)s %(env)s %(target)s -s' % kw
 
     r = envoy.run(cmd)
     if r.status_code == 0:
