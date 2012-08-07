@@ -175,7 +175,7 @@ def make(project, target, env=None):
         env = ""
 
     kw = {
-            "mf": "./ikari/projects/Makefile.ops",
+            "mf": "%s/ikari/projects/Makefile.ops"%os.getcwd(),
             "app": project,
             "target": target,
             "env": env,
