@@ -56,10 +56,10 @@ setup_buildout: $(APP_HOME)/serve/env/bin/buildout
 
 setup_repo_in: $(APP_HOME)/serve/env/bin/python
 	if [ -f $(APP_HOME)/serve/buildout.cfg ]; then\
-	     $(RE) setup_buildout \
+	     $(RE) setup_buildout ; \
 	fi
 	if [ -f $(APP_HOME)/serve/requirements.txt ];then\
-	   $(RE) setup_venv
+	   $(RE) setup_venv ; \
 	fi
 
 setup_repo:
