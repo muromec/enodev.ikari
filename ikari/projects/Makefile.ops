@@ -34,9 +34,9 @@ ssh_h:
 setup_key: ssh_a ssh_h
 
 update_code:
-	sh -c 'cd $(APP_HOME)/serve ;\
-	    git reset --hard \
-	    git pull --rebase'
+	sh -c 'cd $(APP_HOME)/serve && \
+	    (git reset --hard ; \
+	    git pull --rebase )'
 
 setup_venv:
 	$(APP_HOME)/serve/env/bin/pip install -r requirements.txt --upgrade
