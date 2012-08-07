@@ -62,6 +62,9 @@ setup_repo:
 	sudo -u $(APP_USER) $(RE) setup_repo_in
 
 $(APP_HOME)/serve:
+	sudo -u $(APP_USER) $(RE) URL=$(URL) app_home_serve
+
+app_home_serve:
 	git clone $(URL) $(APP_HOME)/serve
 
 clone_code: $(APP_HOME)/serve
