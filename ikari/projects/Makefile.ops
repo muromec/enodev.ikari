@@ -63,7 +63,8 @@ setup_repo_in: $(APP_HOME)/serve/env/bin/python
 	fi
 
 setup_repo:
-	sudo -u $(APP_USER) $(RE) setup_repo_in
+	sh -c 'cd $(APP_HOME)/serve &&
+	    sudo -u $(APP_USER) $(RE) setup_repo_in'
 
 $(APP_HOME)/serve:
 	sudo -u $(APP_USER) $(RE) URL=$(URL) app_home_serve
