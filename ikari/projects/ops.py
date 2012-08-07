@@ -17,28 +17,7 @@ def create_user(project):
 
 
 def setup_key(project):
-    username = 'app-%s' % project
-    ssh_a = '/var/lib/ikari/keys/%s' % username
-
-    if not os.access(ssh_a, 0):
-        envoy.run('ssh-keygen -f %s -N \\"\\"' % ssh_a)
-
-    try:
-        home = pwd.getpwnam(username).pw_dir
-    except KeyError:
-        return
-
-    ssh_dir = "%s/.ssh/" % home
-    ssh_h = "%s/.ssh/id_rsa" % home
-
-    if not os.access(ssh_dir, 0):
-        os.mkdir(ssh_dir)
-
-    if not os.access(ssh_h, 0):
-        envoy.run('cp %s %s' % (ssh_a, ssh_h))
-        envoy.run('cp %s.pub %s.pub' % (ssh_a, ssh_h))
-
-    envoy.run('chown %s -R %s' % (username, ssh_dir))
+    return make(project, 'setup_key')
 
 def clone_code(project, url):
     username = 'app-%s' % project
@@ -208,10 +187,7 @@ def do_up(project):
     sudo(setup_uwsgi, project)
 
 def fetch_key(project):
-    username = 'app-%s' % project
-    ssh_a_pub = '/var/lib/ikari/keys/%s.pub' % username
-
-    return open(ssh_a_pub).read()
+    return make(project, 'fetch_key')
 
 def fetch_status():
     tcpsoc = socket(AF_INET, SOCK_STREAM)
@@ -261,5 +237,15 @@ def _fetch_rev(name):
 def fetch_rev(name):
     username = 'app-%s' % name
     return sudo(_fetch_rev, name, user=username).strip()
+
+def make(project, target):
+    kw = {
+            "mf": "./ikari/projects/Makefile.ops",
+            "app": project,
+            "target": target,
+    }
+    r = envoy.run('make -f %(mf)s APP=%(app)s ME=%(mf)s %(target)s -s' % kw)
+    print r.std_err
+    return r.status_code
 
 sudo_setup(__name__)

@@ -1,0 +1,35 @@
+
+APP_USER=app-$(APP)
+APP_HOME=/home/$(APP_USER)/
+
+SSH_HOME=$(APP_HOME).ssh/
+
+SSH_A=/var/lib/ikari/keys/$(APP_USER)
+SSH_A_PUB=$(SSH_A).pub
+
+SSH_H=$(SSH_HOME)id_rsa
+SSH_H_PUB=$(SSH_H).pub
+
+# targets
+#########
+
+# SSH
+$(SSH_A):
+	ssh-keygen -f $@ -N ""
+
+ssh_a:
+	sudo make -f $(CURDIR)/Makefile.ops APP=$(APP) $(SSH_A) -s
+
+$(SSH_H): $(SSH_A)
+	[ -d $(SSH_HOME) ] || mkdir $(SSH_HOME)
+	cp $(SSH_A) $(SSH_H)
+	cp $(SSH_A_PUB) $(SSH_H_PUB)
+	chown $(APP_USER) -R $(SSH_HOME)	
+
+ssh_h:
+	[ -d $(APP_HOME) ] && sudo make -f $(CURDIR)/Makefile.ops APP=$(APP) $(SSH_H) -s || true
+
+setup_key: ssh_a ssh_h
+
+fetch_key:
+	cat $(SSH_A_PUB)
