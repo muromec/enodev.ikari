@@ -38,7 +38,9 @@ def task_setup(project, s):
 def task_up(project, s):
 
     s('updating')
-    ops.do_up(project.name)
+    ret = ops.do_up(project.name)
+    if ret:
+        return s(ret)
 
     project.rev = rev(project.name)
     s('ok', rev=project.rev)
