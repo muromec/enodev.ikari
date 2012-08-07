@@ -20,7 +20,7 @@ def setup_key(project):
     return make(project, 'setup_key')
 
 def clone_code(project, url):
-    return make(project, clone_code, env=[{"URL":url}])
+    return make(project, clone_code, env={"URL":url})
 
 def setup_repo(project):
     return make(project, 'setup_repo')
