@@ -34,29 +34,8 @@ def clone_code(project, url):
     if not os.access(serve + '/.git/config', 0):
         return 'fail-clone'
 
-def setup_repo_buildout(project):
-    r = envoy.run('env/bin/pip install zc.buildout')
-    r = envoy.run('env/bin/buildout -s')
-    if r.status_code:
-        return 'fail-buildout'
-
-def setup_repo_venv(project):
-    r = envoy.run('env/bin/pip install -r requirements.txt --upgrade')
-    if r.status_code:
-        return 'fail-pip'
-
 def setup_repo(project):
-    username = 'app-%s' % project
-    home = pwd.getpwnam(username).pw_dir
-    serve = '%s/serve' % home
-    os.chdir(serve)
-
-    envoy.run('virtualenv env')
-
-    if os.access('buildout.cfg', 0):
-        return setup_repo_buildout(project)
-    elif os.access('requirements.txt', 0):
-        return setup_repo_venv(project)
+    return make(project, 'setup_repo')
 
 def setup_uwsgi(project):
     tpl_f = '/var/lib/ikari/uwsgi.ini'
@@ -142,9 +121,10 @@ def do_setup(project, clone_url, domain, static=False):
         sudo(setup_nginx, project, domain, static=True)
         return
 
-    ret = sudo(setup_repo, project, _user=username)
-    if ret:
-        return ret
+    try:
+        setup_repo(project)
+    except IOError:
+        return 'fail-repo'
 
     sudo(setup_uwsgi, project)
     sudo(setup_nginx, project, domain)
@@ -165,25 +145,17 @@ def do_key(project, **kw):
     setup_key(project)
 
 def update_code(project):
-    username = 'app-%s' % project
-    home = pwd.getpwnam(username).pw_dir
-    serve = '%s/serve' % home
-
-    os.chdir(serve)
-
-    envoy.run("git reset --hard")
-    envoy.run("git pull --rebase")
+    return make(project, 'update_code')
 
 def do_up(project):
-    username = 'app-%s' % project
 
     oldrev = fetch_rev(project)
-    sudo(update_code, project, _user=username)
+    update_code(project)
     rev = fetch_rev(project)
     if rev and (rev == oldrev):
         return
 
-    sudo(setup_repo, project, _user=username)
+    setup_repo(project)
     sudo(setup_uwsgi, project)
 
 def fetch_key(project):

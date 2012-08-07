@@ -33,6 +33,27 @@ ssh_h:
 
 setup_key: ssh_a ssh_h
 
+update_code:
+	sh -c 'cd $(APP_HOME)/serve ;\
+	    git reset --hard \
+	    git pull --rebase'
+
+setup_venv:
+	$(APP_HOME)/serve/env/bin/pip install -r requirements.txt --upgrade
+
+
+$(APP_HOME)/serve/env/bin/buildout:
+	$(APP_HOME)/serve/env/bin/pip install zc.buildout
+
+setup_buldout: $(APP_HOME)/serve/env/bin/buildout
+	$< -s
+
+setup_repo:
+	virtualenv $(APP_HOME)/serve/env
+	[ -d $(APP_HOME)/serve/buildout.cfg ] && $(RE) setup_buldout || true
+	[ -d $(APP_HOME)/serve/requirements.txt ] && $(RE) setup_venv || true
+
+
 fetch_key:
 	cat $(SSH_A_PUB)
 
