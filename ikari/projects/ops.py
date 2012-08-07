@@ -138,7 +138,11 @@ def update_code(project):
 def do_up(project):
 
     oldrev = fetch_rev(project)
-    update_code(project)
+    try:
+        update_code(project)
+    except IOError:
+        return 'fail-update'
+
     rev = fetch_rev(project)
     if rev and (rev == oldrev):
         return
