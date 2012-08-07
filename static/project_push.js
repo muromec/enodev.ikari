@@ -38,9 +38,9 @@ $(document).ready(function(){
             location.hash = '';
         }
         if(msg.typ == 'project.status') {
-            $("form p").text(msg.status);
+            $("form #form_status_id").text(msg.status);
             if(msg.rev !== undefined) {
-                $("#form_rev_id").val(msg.rev);
+                $("#form_rev_id").text(msg.rev);
             }
         }
         if(msg.typ == 'project.key') {
