@@ -162,7 +162,7 @@ def do_clean(project):
         home, home, serve, uini, nconf))
 
 def do_key(project, **kw):
-    sudo(setup_key, project)
+    setup_key(project)
 
 def update_code(project):
     username = 'app-%s' % project
