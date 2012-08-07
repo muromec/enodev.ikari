@@ -55,9 +55,10 @@ setup_repo: $(APP_HOME)/serve/env/bin/python
 	[ -f $(APP_HOME)/serve/buildout.cfg ] && $(RE) setup_buldout || true
 	[ -f $(APP_HOME)/serve/requirements.txt ] && $(RE) setup_venv || true
 
-
-clone_code:
+$(APP_HOME)/serve:
 	git clone $(URL) $(APP_HOME)/serve
+
+clone_code: $(APP_HOME)/serve
 
 fetch_key:
 	cat $(SSH_A_PUB)
