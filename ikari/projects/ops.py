@@ -177,9 +177,9 @@ def update_code(project):
 def do_up(project):
     username = 'app-%s' % project
 
-    oldrev = sudo(_fetch_rev, project, user=username).strip()
+    oldrev = fetch_rev(project)
     sudo(update_code, project, _user=username)
-    rev = sudo(_fetch_rev, project, user=username).strip()
+    rev = fetch_rev(project)
     if rev and (rev == oldrev):
         return
 
