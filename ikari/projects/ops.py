@@ -250,8 +250,9 @@ def make(project, target):
     print 'at', os.getcwd()
 
     r = envoy.run(cmd)
+    if r.status_code == 0:
+        return r.std_out
 
-    print r.std_err
-    return r.status_code
+    raise IOError("make failed %d %r" %(r.std_err, r.status_code))
 
 sudo_setup(__name__)
