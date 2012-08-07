@@ -97,13 +97,13 @@ def setup_nginx(project, domain, static=False):
     envoy.run('sudo /etc/init.d/nginx reload')
 
 def do_setup(project, clone_url, domain, static=False):
-    username = 'app-%s' % project
 
     sudo(create_user, project)
     setup_key(project)
-    ret = sudo(clone_code, project, clone_url, _user=username)
-    if ret:
-        return ret
+    try:
+        clone_code(project, clone_url)
+    except IOError:
+        return 'fail-clone'
 
     if static:
         sudo(setup_nginx, project, domain, static=True)
