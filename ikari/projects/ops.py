@@ -165,7 +165,10 @@ def fetch_status():
     return make('-', 'fetch_status')
 
 def fetch_status_app(name):
-    return make(name, 'fetch_status_app')
+    try:
+        return make(name, 'fetch_status_app')
+    except IOError:
+        return
 
 def fetch_rev(name):
     return make(name, 'fetch_rev')
