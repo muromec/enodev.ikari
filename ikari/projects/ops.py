@@ -224,19 +224,9 @@ def fetch_status_app(name):
     s.close()
     return data
 
-def _fetch_rev(name):
-    username = 'app-%s' % name
-    home = pwd.getpwnam(username).pw_dir
-    serve = '%s/serve' % home
-    os.chdir(serve)
-
-    f = '%h %s'
-    r = envoy.run("git log --format=\\'%s\\' -n 1" % f)
-    return r.std_out
 
 def fetch_rev(name):
-    username = 'app-%s' % name
-    return sudo(_fetch_rev, name, user=username).strip()
+    return make(name, 'fetch_rev')
 
 def make(project, target):
     kw = {
