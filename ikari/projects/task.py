@@ -27,10 +27,10 @@ def task_setup(project, s):
             static=project.template=='static'
     )
 
-    if not ret:
-        s('ok')
-    else:
-        s(ret)
+    if ret:
+        return s(ret)
+
+    s('ok')
 
     project.rev = rev(project.name)
     copy_key(project.name, s._id)
