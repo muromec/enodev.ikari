@@ -165,7 +165,7 @@ def make(project, target, env=None):
     if env:
         env = str.join(" ", [
             "%s=%s" % (k,v)
-            for k, v in env
+            for k, v in env.items()
         ])
     else:
         env = ""
