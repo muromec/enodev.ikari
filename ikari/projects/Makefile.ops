@@ -10,6 +10,8 @@ SSH_A_PUB=$(SSH_A).pub
 SSH_H=$(SSH_HOME)id_rsa
 SSH_H_PUB=$(SSH_H).pub
 
+NGINX_CONF=/etc/nginx/sites-enabled/$(APP_USER)
+
 # targets
 #########
 
@@ -71,6 +73,13 @@ $(APP_HOME)/serve:
 
 app_home_serve:
 	git clone $(URL) $(APP_HOME)/serve
+
+app_clean_in:
+	rm -rf $(APP_HOME)/serve $(APP_HOME)/uwsgi.ini  $(SSH_HOME)
+
+app_clean:
+	sudo -u $(APP_USER) $(RE) app_clean_in
+	sudo rm -f $(NGINX_CONF)
 
 clone_code: $(APP_HOME)/serve
 
