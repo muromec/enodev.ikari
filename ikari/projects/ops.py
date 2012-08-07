@@ -62,7 +62,7 @@ def setup_repo_buildout(project):
         return 'fail-buildout'
 
 def setup_repo_venv(project):
-    r = envoy.run('env/bin/pip install -r requirements.txt')
+    r = envoy.run('env/bin/pip install -r requirements.txt --upgrade')
     if r.status_code:
         return 'fail-pip'
 
