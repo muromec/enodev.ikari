@@ -190,7 +190,7 @@ def fetch_key(project):
     return make(project, 'fetch_key')
 
 def fetch_status():
-    return make(project, 'fetch_status')
+    return make('-', 'fetch_status')
 
 def fetch_status_app(name):
     return make(name, 'fetch_status_app')
