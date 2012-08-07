@@ -26,13 +26,13 @@ def task_setup(project, s):
             domain=project.domain,
             static=project.template=='static'
     )
-    project.rev = rev(project.name)
 
     if not ret:
         s('ok')
     else:
         s(ret)
 
+    project.rev = rev(project.name)
     copy_key(project.name, s._id)
 
 def task_up(project, s):
