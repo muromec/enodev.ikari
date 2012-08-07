@@ -13,7 +13,7 @@ SSH_H_PUB=$(SSH_H).pub
 # targets
 #########
 
-RE=make -f $(ME) APP=$(APP) -s
+RE=make -f $(ME) APP=$(APP) ME=$(ME) -s
 
 # SSH
 $(SSH_A):
@@ -29,7 +29,7 @@ $(SSH_H): $(SSH_A)
 	chown $(APP_USER) -R $(SSH_HOME)	
 
 ssh_h:
-	[ -d $(APP_HOME) ] && sudo $(RE) $(SSH_H) || true
+	if [ -d $(APP_HOME) ] ;then sudo $(RE) $(SSH_H) ; fi
 
 setup_key: ssh_a ssh_h
 
@@ -51,12 +51,16 @@ $(APP_HOME)/serve/env/bin/buildout:
 $(APP_HOME)/serve/env/bin/python:
 	virtualenv $(APP_HOME)/serve/env
 
-setup_buldout: $(APP_HOME)/serve/env/bin/buildout
+setup_buildout: $(APP_HOME)/serve/env/bin/buildout
 	$< -s
 
 setup_repo_in: $(APP_HOME)/serve/env/bin/python
-	[ -f $(APP_HOME)/serve/buildout.cfg ] && $(RE) setup_buldout || true
-	[ -f $(APP_HOME)/serve/requirements.txt ] && $(RE) setup_venv || true
+	if [ -f $(APP_HOME)/serve/buildout.cfg ]; then\
+	     $(RE) setup_buildout \
+	fi
+	if [ -f $(APP_HOME)/serve/requirements.txt ];then\
+	   $(RE) setup_venv
+	fi
 
 setup_repo:
 	sudo -u $(APP_USER) $(RE) setup_repo_in
