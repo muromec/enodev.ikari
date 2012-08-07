@@ -206,9 +206,6 @@ def make(project, target):
     }
     cmd = 'make -f %(mf)s APP=%(app)s ME=%(mf)s %(target)s -s' % kw
 
-    print 'run', cmd
-    print 'at', os.getcwd()
-
     r = envoy.run(cmd)
     if r.status_code == 0:
         return r.std_out
