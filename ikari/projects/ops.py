@@ -182,6 +182,6 @@ def make(project, target):
     if r.status_code == 0:
         return r.std_out
 
-    raise IOError("make failed %d %r" %(r.std_err, r.status_code))
+    raise IOError("make failed %d %r" %(r.status_code, r.std_err))
 
 sudo_setup(__name__)
