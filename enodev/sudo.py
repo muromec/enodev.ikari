@@ -28,7 +28,7 @@ def sudo(f, *a, **kw):
             entry_mod,
             f.__module__,
             f.__name__,
-            str.join(',', a),
+            str.join(',', a).encode('base64').strip(),
             cwd,
     )
     r = envoy.run(cmd)
@@ -52,6 +52,7 @@ if __name__ == '__main__':
 
     f = getattr(mod, fname)
 
+    args = args.deocde('base64')
     args = args.split(',')
     kwargs = {}
 
