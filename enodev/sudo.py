@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     f = getattr(mod, fname)
 
-    args = args.deocde('base64')
+    args = args.decode('base64')
     args = args.split(',')
     kwargs = {}
 
