@@ -51,7 +51,7 @@
 <tr>
     <td>{{loop.index}}</td>
     <td><a href="{{project.name}}" >{{project.name}}</a></td>
-    <td>{{status(project.status, project._alive)}}</td>
+    <td>{{status(project.status or 'new', project._alive)}}</td>
     <td>{{rstatus(project._alive, project._stats)}}</td>
     <td>{{project.rev}}</td>
 </tr>
