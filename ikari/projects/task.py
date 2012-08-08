@@ -30,9 +30,9 @@ def task_setup(project, s):
     if ret:
         return s(ret)
 
-    s('ok')
-
     project.rev = rev(project.name)
+    s('ok', rev=project.rev)
+
     copy_key(project.name, s._id)
 
 def task_up(project, s):
