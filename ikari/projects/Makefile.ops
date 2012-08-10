@@ -83,6 +83,9 @@ app_clean:
 
 clone_code: $(APP_HOME)/serve
 
+create_user:
+	sudo $(APP_USER) --create-home
+
 fetch_key:
 	cat $(SSH_A_PUB)
 
@@ -98,3 +101,6 @@ fetch_status:
 
 fetch_status_app:
 	nc -U /tmp/$(APP_USER).stats.sock
+
+fetch_uid:
+	id -u $(APP_USER)

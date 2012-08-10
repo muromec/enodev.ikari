@@ -2,19 +2,12 @@ import pwd
 import os
 from socket import *
 
+from flask import render_template
+
 import envoy
-from enodev.sudo import sudo, setup as sudo_setup
 
 def create_user(project):
-    username = 'app-%s' % project
-    try:
-        pwd.getpwnam(username)
-        return
-    except KeyError:
-        pass
-
-    envoy.run("useradd %s --create-home" % username)
-
+    return make(project, 'create_user')
 
 def setup_key(project):
     return make(project, 'setup_key')
@@ -25,14 +18,46 @@ def clone_code(project, url):
 def setup_repo(project):
     return make(project, 'setup_repo')
 
-def setup_uwsgi(project):
-    tpl_f = '/var/lib/ikari/uwsgi.ini'
-    tpl = open(tpl_f).read()
+class Conf(object):
+    def __init__(self, project):
+        self.project = project
 
-    username = 'app-%s' % project
-    home = pwd.getpwnam(username).pw_dir
-    uid = pwd.getpwnam(username).pw_uid
-    serve = '%s/serve' % home
+    @property
+    def username(self):
+        return 'app-%s' % self.project
+
+    @property
+    def uid(self):
+        return make(self.project, 'fetch_uid')
+
+    @property
+    def home(self):
+        return '/home/%s' % self.username
+
+    @property
+    def serve(self):
+        return '%s/serve' % self.home
+
+    @property
+    def sock(self):
+        return "/tmp/%s.stats.sock" % self.username
+
+    @property
+    def sock_stat(self):
+        return "/tmp/%s.stats.sock" % self.username
+
+    @property
+    def venv(self):
+        return '%s/env' % self.serve
+
+    def export(self):
+        return {
+                key:getattr(self, key)
+                for key in self.__class__.keys()
+        }
+
+def setup_uwsgi(project):
+    conf = Conf(project)
 
     entry = "entry.py" # XXX
     for f in ['entry.py', 'bin/django.wsgi', 'bin/entry', 'main.py']:
@@ -47,54 +72,39 @@ def setup_uwsgi(project):
     r = re.search('as application|application = |import application', source)
     cname = 'application' if r else 'app'
 
-    ini = tpl %{
-            "entry": entry,
-            "sock": "/tmp/%s.sock" % username,
-            "stats_sock": "/tmp/%s.stats.sock" % username,
-            "home": home,
-            "serve": serve,
-            "uid": uid,
-            "callable": cname,
-    }
 
-    if os.access('%s/env/bin/activate' % serve, 0):
-        ini += '\nvenv = %s/env\n' % serve
+    ini = render_template('conf/uwsgi.ini',
+            entry=entry, callable=cname,
+            **conf.export())
 
-    uwsgi = open('%s/uwsgi.ini' % home, 'w')
-    uwsgi.write(ini)
+    putfile('%s/uwsgi.ini' % conf.home, ini)
+    
+def putfile(fname, contents):
+
+    fbuf = '/tmp/buf.%d' % os.getpid()
+
+    uwsgi = open(fbuf, 'w')
+    uwsgi.write(contents)
     uwsgi.close()
 
+    envoy.run('sudo mv %s %s' % (fbuf, fname))
+
 def setup_nginx(project, domain, static=False):
-    tpl_f = '/var/lib/ikari/'
-    if static:
-        tpl_f += 'nginx-static.conf'
-    else:
-        tpl_f += 'nginx.conf'
+    conf = Conf(project)
 
-    tpl = open(tpl_f).read()
-    
-    username = 'app-%s' % project
-    home = pwd.getpwnam(username).pw_dir
+    nginx = render_template('conf/nginx.conf',
+            domains= domain,
+            **conf.export()
+    )
 
-    sock = "/tmp/%s.sock" % username
-    serve = '%s/serve' % home
-
-    conf = tpl % {
-            "project": project,
-            "domains": domain,
-            "sock": sock,
-            "serve": serve,
-    }
-
-    nginx = open('/etc/nginx/sites-enabled/%s' % username, 'w')
-    nginx.write(conf)
-    nginx.close()
+    fname = '/etc/nginx/sites-enabled/%s' % username
+    putfile(fname, nginx)
 
     envoy.run('sudo /etc/init.d/nginx reload')
 
 def do_setup(project, clone_url, domain, static=False):
 
-    sudo(create_user, project)
+    create_user(project)
     setup_key(project)
     try:
         clone_code(project, clone_url)
@@ -102,7 +112,7 @@ def do_setup(project, clone_url, domain, static=False):
         return 'fail-clone'
 
     if static:
-        sudo(setup_nginx, project, domain, static=True)
+        setup_nginx(project, domain, static=True)
         return
 
     try:
@@ -110,8 +120,8 @@ def do_setup(project, clone_url, domain, static=False):
     except IOError:
         return 'fail-repo'
 
-    sudo(setup_uwsgi, project)
-    sudo(setup_nginx, project, domain)
+    setup_uwsgi(project)
+    setup_nginx(project, domain)
 
 def do_clean(project):
     return make(project, 'app_clean')
@@ -135,7 +145,7 @@ def do_up(project):
         return
 
     setup_repo(project)
-    sudo(setup_uwsgi, project)
+    setup_uwsgi(project)
 
 def fetch_key(project):
     return make(project, 'fetch_key')
@@ -174,5 +184,3 @@ def make(project, target, env=None):
         return r.std_out
 
     raise IOError("make failed %d %r" %(r.status_code, r.std_err))
-
-sudo_setup(__name__)
