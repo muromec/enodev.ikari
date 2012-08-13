@@ -84,7 +84,7 @@ app_clean:
 clone_code: $(APP_HOME)/serve
 
 create_user:
-	sudo $(APP_USER) --create-home
+	id $(APP_USER) || sudo adduser $(APP_USER) --create-home
 
 fetch_key:
 	cat $(SSH_A_PUB)
