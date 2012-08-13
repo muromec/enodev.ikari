@@ -5,7 +5,7 @@ from flask import render_template
 import envoy
 
 from pkg_resources import resource_filename
-MAKEFILE = os.abspath(resource_filename("ikari.projects', Makefile.ops"))
+MAKEFILE = os.path.abspath(resource_filename("ikari.projects', Makefile.ops"))
 
 def create_user(project):
     return make(project, 'create_user')
