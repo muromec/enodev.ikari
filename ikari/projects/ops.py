@@ -41,7 +41,7 @@ class Conf(object):
 
     @property
     def sock(self):
-        return "/tmp/%s.stats.sock" % self.username
+        return "/tmp/%s.sock" % self.username
 
     @property
     def sock_stat(self):
