@@ -85,7 +85,7 @@ def make(project, target, env=None):
             "target": target,
             "env": env,
     }
-    cmd = 'cd / ; make -f %(mf)s APP=%(app)s ME=%(mf)s %(env)s %(target)s -s' % kw
+    cmd = 'make -f %(mf)s APP=%(app)s ME=%(mf)s %(env)s %(target)s -s' % kw
 
     status_code, std_out = runner.run(cmd)
     if status_code == 0:
