@@ -54,7 +54,7 @@ class Conf(object):
     def export(self):
         return {
                 key:getattr(self, key)
-                for key in self.__class__.__dict__keys()
+                for key in self.__class__.__dict__.keys()
         }
 
 def setup_uwsgi(project):
