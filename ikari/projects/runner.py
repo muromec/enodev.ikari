@@ -1,6 +1,5 @@
 import os
 import envoy
-import ssh
 
 from pkg_resources import resource_filename
 MAKEFILE = os.path.abspath(resource_filename("ikari.projects", "Makefile.ops"))
@@ -27,6 +26,7 @@ class LocalRunner(object):
 class SSHRunner(object):
     MAKEFILE = '/tmp/Makefile.ops'
     def __init__(self, host):
+        import ssh
         self.client = ssh.SSHClient()
         self.client.load_host_keys('.ssh/known_hosts')
         self.client.connect(host, 22, 'root', key_filename='.ssh/id_rsa')
