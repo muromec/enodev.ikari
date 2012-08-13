@@ -86,6 +86,9 @@ clone_code: $(APP_HOME)/serve
 create_user:
 	id $(APP_USER) || sudo adduser $(APP_USER) --create-home
 
+nginx_reload:
+	sudo /etc/init.d/nginx reload'
+
 fetch_key:
 	cat $(SSH_A_PUB)
 
