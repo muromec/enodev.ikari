@@ -1,10 +1,11 @@
-import pwd
 import os
-from socket import *
 
 from flask import render_template
 
 import envoy
+
+from pkg_resources import resource_filename
+MAKEFILE = os.abspath(resource_filename("ikari.projects', Makefile.ops"))
 
 def create_user(project):
     return make(project, 'create_user')
@@ -97,7 +98,7 @@ def setup_nginx(project, domain, static=False):
             **conf.export()
     )
 
-    fname = '/etc/nginx/sites-enabled/%s' % username
+    fname = '/etc/nginx/sites-enabled/%s' % conf.username
     putfile(fname, nginx)
 
     envoy.run('sudo /etc/init.d/nginx reload')
@@ -172,7 +173,7 @@ def make(project, target, env=None):
         env = ""
 
     kw = {
-            "mf": "%s/ikari/projects/Makefile.ops"%os.getcwd(),
+            "mf": MAKEFILE,
             "app": project,
             "target": target,
             "env": env,
