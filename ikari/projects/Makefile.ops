@@ -112,5 +112,5 @@ fetch_uid:
 
 hook-post-setup:
 	if [ -e $(APP_HOME)/serve/Makefile.ikari ]; then \
-	    sh -c 'cd $(APP_HOME)/serve && sudo -u $(APP_USER) make -f Makefile.ikari setup' ; \
+	    sh -c 'cd $(APP_HOME)/serve && sudo -H -u $(APP_USER) make -f Makefile.ikari setup' ; \
 	fi
