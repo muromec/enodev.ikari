@@ -64,7 +64,7 @@ class Conf(object):
         subdir = make(self.project, 'fetch_http_root')
         subdir = subdir.strip()
 
-        return str.join('/', self.serve, subdir)
+        return str.join('/', [self.serve, subdir])
 
     @property
     def sock(self):
