@@ -107,3 +107,10 @@ fetch_status_app:
 
 fetch_uid:
 	id -u $(APP_USER)
+
+# hooks
+
+hook-post-setup:
+	if [ -e $(APP_HOME)/serve/Makefile.ikari ]; then \
+	    sh -c 'cd $(APP_HOME)/serve && sudo -u $(APP_USER) make -f Makefile.ikari setup' \
+	fi

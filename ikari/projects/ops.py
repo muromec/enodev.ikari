@@ -131,6 +131,8 @@ def do_setup(project, clone_url, domain, static=False):
     except IOError:
         return 'fail-repo'
 
+    make(project, 'hook-post-setup')
+
     setup_uwsgi(project)
     setup_nginx(project, domain)
 
@@ -151,4 +153,5 @@ def do_up(project):
         return
 
     setup_repo(project)
+    make(project, 'hook-post-setup')
     setup_uwsgi(project)
