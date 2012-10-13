@@ -108,6 +108,9 @@ fetch_status_app:
 fetch_uid:
 	id -u $(APP_USER)
 
+fetch_http_root:
+	if [ -L http_root ]; readlink http_root; fi
+
 # hooks
 
 hook-post-setup:

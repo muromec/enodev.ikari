@@ -59,6 +59,14 @@ class Conf(object):
         return '%s/serve' % self.home
 
     @property
+    def serve_http(self):
+
+        subdir = make(self.project, 'fetch_http_root')
+        subdir = subdir.strip()
+
+        return str.join('/', self.serve, subdir)
+
+    @property
     def sock(self):
         return "/tmp/%s.sock" % self.username
 
@@ -105,6 +113,7 @@ def setup_nginx(project, domain, static=False):
 
     nginx = render_template('conf/nginx.conf',
             domains= domain,
+            static=static,
             **conf.export()
     )
 
