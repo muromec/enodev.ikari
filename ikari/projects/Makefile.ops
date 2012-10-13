@@ -110,7 +110,7 @@ fetch_uid:
 
 fetch_http_root:
 	if [ -L $(APP_HOME)/serve/http_root ]; then \
-	    readlink $(APP_HOME)/serve/http_root ;
+	    readlink $(APP_HOME)/serve/http_root ; \
 	fi
 
 # hooks
