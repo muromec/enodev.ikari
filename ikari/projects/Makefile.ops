@@ -109,7 +109,7 @@ fetch_uid:
 	id -u $(APP_USER)
 
 fetch_http_root:
-	if [ -L http_root ]; readlink http_root; fi
+	if [ -L http_root ]; then readlink http_root; fi
 
 # hooks
 
