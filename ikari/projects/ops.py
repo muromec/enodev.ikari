@@ -157,10 +157,11 @@ def do_up(project):
     except IOError:
         return 'fail-update'
 
+    make(project, 'hook-post-setup')
+
     rev = fetch_rev(project)
     if rev and (rev == oldrev):
         return
 
     setup_repo(project)
-    make(project, 'hook-post-setup')
     setup_uwsgi(project)
