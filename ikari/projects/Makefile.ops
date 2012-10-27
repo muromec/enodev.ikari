@@ -87,7 +87,7 @@ create_user:
 	id $(APP_USER) || sudo useradd $(APP_USER) --create-home
 
 nginx_reload:
-	sudo /etc/init.d/nginx reload'
+	sudo /etc/init.d/nginx reload
 
 fetch_key:
 	cat $(SSH_A_PUB)
