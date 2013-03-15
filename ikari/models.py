@@ -1,4 +1,4 @@
-from formgear import models
+from hopak import models
 from flaskext.auth import AuthUser
 
 class User(models.Model, AuthUser):

@@ -1,4 +1,7 @@
 from flask import Flask
+from flask.ext.hopak import Admin
+from hopak.ds.mongo import MongoDS
+from flask.ext.pymongo import PyMongo
 from flaskext.auth import Auth
 from flask_bootstrap import Bootstrap
 
@@ -8,16 +11,15 @@ app.secret_key = 'aequaiK7coTh1Oepahb7aeNgiaph3OhGIethu9keeeRae1ahieM0tu5oaekeer
 Auth(app)
 Bootstrap(app)
 
-def set_db(name):
-    from formgear import mongo
-    mongo.db = mongo.connection[name]
+mongo = PyMongo(app)
 
-app.before_first_request(lambda:set_db('ikari'))
+admin = Admin(url='/hopak')
+admin.init_app(app, MongoDS(mongo))
 
 from flask import Blueprint
 from pkg_resources import resource_filename
-fg = Blueprint('formgear', __name__,
-                template_folder=resource_filename('formgear', 'templates'))
+fg = Blueprint('hopak', __name__,
+                template_folder=resource_filename('hopak', 'templates'))
 app.register_blueprint(fg)
 
 from flaskext import redtask as task

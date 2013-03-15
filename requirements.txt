@@ -3,8 +3,9 @@ requests
 Flask-Auth
 Flask-Bootstrap
 Flask-Redtask
-formgear
+hopak
 PyYaml
 pymongo
+Flask-PyMongo
 consoleargs
 envoy
