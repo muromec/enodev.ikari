@@ -70,10 +70,10 @@ def get_runner(key='local'):
 
 def get_host(project):
     if project == 'texr':
-        key = 'root@109.234.152.149'
+        key = '109.234.152.149'
         return key
     elif project == 'texr-driver':
-        key = 'root@37.200.68.226'
+        key = '37.200.68.226'
         return key
 
     return 'local'
