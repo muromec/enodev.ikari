@@ -26,9 +26,11 @@ class LocalRunner(object):
 class SSHRunner(object):
     MAKEFILE = '/tmp/Makefile.ops'
     def __init__(self, host):
+        from ssh.client import AutoAddPolicy
         import ssh
         self.client = ssh.SSHClient()
         self.client.load_host_keys('.ssh/known_hosts')
+        self.client.set_missing_host_key_policy(AutoAddPolicy())
         self.client.connect(host, 22, 'root', key_filename='.ssh/id_rsa')
 
         self.sftp = self.client.open_sftp()
