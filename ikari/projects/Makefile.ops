@@ -41,7 +41,7 @@ update_code_in:
 	    git pull --rebase )'
 
 update_code:
-	sudo -u $(APP_USER) $(RE) update_code_in
+	sudo -i -u $(APP_USER) $(RE) update_code_in
 
 setup_venv:
 	$(APP_HOME)/serve/env/bin/pip install -r requirements.txt --upgrade
@@ -97,7 +97,7 @@ fetch_rev_in:
 	    git log -n 1 --format="%h %s"'
 
 fetch_rev:
-	sudo -u $(APP_USER) $(RE) fetch_rev_in
+	sudo -i -u $(APP_USER) $(RE) fetch_rev_in
 
 fetch_status:
 	nc -U /var/run/emperor.sock
