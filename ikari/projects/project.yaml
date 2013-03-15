@@ -19,6 +19,7 @@ fields:
         - [mongo, flask+mongo]
         - [pg, postgres+django]
         - [static, static pages]
+        - [daemon, standalone daemon]
 
       widget: select
 

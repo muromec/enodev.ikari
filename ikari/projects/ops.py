@@ -94,10 +94,14 @@ def setup_uwsgi(project):
             entry = path
             break
 
-    source = open(entry).read()
-    import re
+    try:
+        source = open(entry).read()
+        import re
 
-    r = re.search('as application|application = |import application', source)
+        r = re.search('as application|application = |import application', source)
+    except IOError:
+        r = None
+
     cname = 'application' if r else 'app'
 
 
@@ -105,7 +109,7 @@ def setup_uwsgi(project):
             entry=entry, callable=cname,
             **conf.export())
 
-    putfile('%s/uwsgi.ini' % conf.home, ini)
+    putfile(project, '%s/uwsgi.ini' % conf.home, ini)
 
 def setup_nginx(project, domain, static=False):
 
@@ -118,7 +122,7 @@ def setup_nginx(project, domain, static=False):
     )
 
     fname = '/etc/nginx/sites-enabled/%s' % conf.username
-    putfile(fname, nginx)
+    putfile(project, fname, nginx)
 
     make('-', 'nginx_reload')
 

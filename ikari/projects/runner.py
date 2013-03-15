@@ -68,8 +68,18 @@ def get_runner(key='local'):
 
     return r
 
+def get_host(project):
+    if project == 'texr':
+        key = 'root@109.234.152.149'
+        return key
+    elif project == 'texr-driver':
+        key = 'root@37.200.68.226'
+        return key
+
+    return 'local'
+
 def make(project, target, env=None):
-    runner = get_runner()
+    runner = get_runner(get_host(project))
 
     if env:
         env = str.join(" ", [
@@ -93,7 +103,6 @@ def make(project, target, env=None):
 
     raise IOError("make failed %d %s" % (status_code, target))
 
-def putfile(fname, contents):
-    runner = get_runner()
+def putfile(project, fname, contents):
+    runner = get_runner(get_host(project))
     runner.putfile(fname, contents)
-
